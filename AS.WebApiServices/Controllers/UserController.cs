@@ -7,10 +7,10 @@ namespace AS.WebApiServices.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UsersController : ControllerBase
+    public class UserController : ControllerBase
     {
         private readonly AdStoreDbContext _dbContext;
-        public UsersController(AdStoreDbContext context)
+        public UserController(AdStoreDbContext context)
         {
             _dbContext = context;
         }

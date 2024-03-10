@@ -28,19 +28,3 @@ namespace AS.Data.Entities
         public DateTime DateCreated { get; set; }
     }
 }
-
-
-/*
- 
-user:
- - username varchar(100)
- - password varchar(50)
- - firstName varchar(100)
- - lastName varchar(100)
- - age int
- - town varchar(50)
- - rating int
- - isPremium bit
- - dateCreated datetime
- 
- */

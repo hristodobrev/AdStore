@@ -8,5 +8,6 @@ namespace AS.Data.Context
         public AdStoreDbContext(DbContextOptions<AdStoreDbContext> options) : base(options) { }
 
         public DbSet<User> Users { get; set; }
+        public DbSet<Category> Categories { get; set; }
     }
 }
