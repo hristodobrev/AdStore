@@ -20,7 +20,6 @@ namespace AS.ApplicationServices.RequestModels.User
         [Required]
         [StringLength(50)]
         public string Town { get; set; }
-        public int Rating { get; set; }
         public bool IsPremium { get; set; }
     }
 }

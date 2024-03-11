@@ -26,8 +26,7 @@ namespace AS.WebApiServices.Controllers
                 LastName = model.LastName,
                 Age = model.Age,
                 Town = model.Town,
-                IsPremium = model.IsPremium,
-                DateCreated = DateTime.Now
+                IsPremium = model.IsPremium
             });
 
             this._dbContext.SaveChanges();

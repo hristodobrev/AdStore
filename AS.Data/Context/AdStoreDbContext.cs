@@ -9,5 +9,15 @@ namespace AS.Data.Context
 
         public DbSet<User> Users { get; set; }
         public DbSet<Category> Categories { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<User>().HasIndex(u => u.Username).IsUnique();
+            modelBuilder.Entity<User>().Property(u => u.DateCreated).HasDefaultValueSql("getdate()");
+
+            modelBuilder.Entity<Category>().Property(u => u.DateCreated).HasDefaultValueSql("getdate()");
+
+            base.OnModelCreating(modelBuilder);
+        }
     }
 }

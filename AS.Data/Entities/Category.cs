@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AS.Data.Entities
 {
@@ -17,7 +16,6 @@ namespace AS.Data.Entities
         public int RequiredRating { get; set; }
         [Required]
         public bool IsRequiringPremium { get; set; }
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public DateTime DateCreated { get; set; }
     }
 }
