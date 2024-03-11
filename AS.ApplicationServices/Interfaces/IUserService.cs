@@ -5,10 +5,10 @@ namespace AS.ApplicationServices.Interfaces
 {
     public interface IUserService
     {
-        int CreateAsync(CreateUserRequestModel model);
-        Task<GetUserResponseModel> GetByIdAsync(int id);
+        Task<int> CreateAsync(CreateUserRequestModel model);
+        Task<GetUserResponseModel?> GetByIdAsync(int id);
         Task<IEnumerable<GetUserResponseModel>> GetAllAsync();
-        void UpdateAsync(UpdateUserRequestModel model);
-        void DeleteAsync(int id);
+        Task UpdateAsync(UpdateUserRequestModel? model);
+        Task DeleteAsync(int id);
     }
 }

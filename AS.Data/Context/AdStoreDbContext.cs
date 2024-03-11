@@ -15,6 +15,7 @@ namespace AS.Data.Context
             modelBuilder.Entity<User>().HasIndex(u => u.Username).IsUnique();
             modelBuilder.Entity<User>().Property(u => u.DateCreated).HasDefaultValueSql("getdate()");
 
+            modelBuilder.Entity<Category>().HasIndex(u => u.Name).IsUnique();
             modelBuilder.Entity<Category>().Property(u => u.DateCreated).HasDefaultValueSql("getdate()");
 
             base.OnModelCreating(modelBuilder);

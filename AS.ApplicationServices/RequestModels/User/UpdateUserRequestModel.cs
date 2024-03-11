@@ -5,6 +5,8 @@ namespace AS.ApplicationServices.RequestModels.User
     public class UpdateUserRequestModel
     {
         [Required]
+        public int Id { get; set; }
+        [Required]
         [DataType(DataType.Password)]
         public string Password { get; set; }
         [StringLength(100)]
