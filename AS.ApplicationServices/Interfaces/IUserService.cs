@@ -8,7 +8,7 @@ namespace AS.ApplicationServices.Interfaces
         Task<int> CreateAsync(CreateUserRequestModel model);
         Task<GetUserResponseModel?> GetByIdAsync(int id);
         Task<IEnumerable<GetUserResponseModel>> GetAllAsync();
-        Task UpdateAsync(UpdateUserRequestModel? model);
+        Task UpdateAsync(UpdateUserRequestModel model);
         Task DeleteAsync(int id);
     }
 }

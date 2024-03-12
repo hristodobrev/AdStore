@@ -21,7 +21,7 @@ namespace AS.WebApiServices.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
-        [ProducesResponseType(typeof(GetUserResponseModel), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         public async Task<IActionResult> Create(CreateUserRequestModel model)
         {
             await this._service.CreateAsync(model);
@@ -54,7 +54,7 @@ namespace AS.WebApiServices.Controllers
         /// </summary>
         /// <returns>User</returns>
         [HttpGet()]
-        [ProducesResponseType(typeof(GetUserResponseModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<GetUserResponseModel>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAll()
         {
             var users = await this._service.GetAllAsync();
