@@ -1,28 +1,28 @@
 ﻿using AS.ApplicationServices.Interfaces;
-using AS.ApplicationServices.RequestModels.Category;
-using AS.ApplicationServices.ResponseModels.Category;
+using AS.ApplicationServices.RequestModels.Ad;
+using AS.ApplicationServices.ResponseModels.Ad;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AS.WebApiServices.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CategoryController : ControllerBase
+    public class AdController : ControllerBase
     {
-        private readonly ICategoryService _service;
-        public CategoryController(ICategoryService service)
+        private readonly IAdService _service;
+        public AdController(IAdService service)
         {
-            _service = service;
+            this._service = service;
         }
 
         /// <summary>
-        /// Creates a user
+        /// Creates an Ad
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        public async Task<IActionResult> Create(CreateCategoryRequestModel model)
+        public async Task<IActionResult> Post(CreateAdRequestModel model)
         {
             await this._service.CreateAsync(model);
 
@@ -30,48 +30,45 @@ namespace AS.WebApiServices.Controllers
         }
 
         /// <summary>
-        /// Returns a category searched by id
+        /// Returns an ad searched by id
         /// </summary>
-        /// <param name="id">Search category by id</param>
-        /// <returns>Category</returns>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(GetCategoryResponseModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(GetAdResponseModel), StatusCodes.Status200OK)]
         public async Task<IActionResult> Get(int id)
         {
-            var category = await this._service.GetByIdAsync(id);
-
-            if (category == null)
+            var ad = await this._service.GetByIdAsync(id);
+            if (ad == null)
             {
                 return NotFound();
             }
 
-            return Ok(category);
+            return Ok(ad);
         }
 
         /// <summary>
-        /// Returns all categories
+        /// Returns all ads
         /// </summary>
-        /// <returns>Category</returns>
+        /// <returns></returns>
         [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(IEnumerable<GetCategoryResponseModel>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<GetAdResponseModel>), StatusCodes.Status200OK)]
         public async Task<IActionResult> Get()
         {
-            var categories = await this._service.GetAllAsync();
+            var ads = await this._service.GetAllAsync();
 
-            return Ok(categories);
+            return Ok(ads);
         }
 
         /// <summary>
-        /// Updates a category by given id. If the category is not found it does nothing
+        /// Updates an ad by given id. If the ad is not found it does nothing
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPut]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> Put(UpdateCategoryRequestModel model)
+        public async Task<IActionResult> Put(UpdateAdRequestModel model)
         {
             await this._service.UpdateAsync(model);
 
@@ -79,7 +76,7 @@ namespace AS.WebApiServices.Controllers
         }
 
         /// <summary>
-        /// Deletes a category by given id. If the category is not found it does nothing
+        /// Deletes an ad by given id. If the ad is not found it does nothing
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>

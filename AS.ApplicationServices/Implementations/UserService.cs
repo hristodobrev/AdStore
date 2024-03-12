@@ -1,6 +1,5 @@
 ﻿using AS.ApplicationServices.Interfaces;
 using AS.ApplicationServices.RequestModels.User;
-using AS.ApplicationServices.ResponseModels.Category;
 using AS.ApplicationServices.ResponseModels.User;
 using AS.Data.Context;
 using AS.Data.Entities;
@@ -29,7 +28,7 @@ namespace AS.ApplicationServices.Implementations
                 IsPremium = model.IsPremium
             };
 
-            this._dbContext.Users.Add(user);
+            await this._dbContext.Users.AddAsync(user);
 
             await this._dbContext.SaveChangesAsync();
 

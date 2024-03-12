@@ -15,7 +15,7 @@ namespace AS.ApplicationServices.Implementations
             _dbContext = dbContext;
         }
 
-        public async Task<int> CreateAsync(CreateAdRequestModel model)
+        public async Task<int> CreateAsync(CreateCategoryRequestModel model)
         {
             var category = new Category
             {
@@ -25,7 +25,7 @@ namespace AS.ApplicationServices.Implementations
                 IsRequiringPremium = model.IsRequiringPremium
             };
 
-            this._dbContext.Categories.Add(category);
+            await this._dbContext.Categories.AddAsync(category);
 
             await this._dbContext.SaveChangesAsync();
 
@@ -57,7 +57,7 @@ namespace AS.ApplicationServices.Implementations
         {
             var category = await this._dbContext.Categories.SingleOrDefaultAsync(c => c.Id == id);
 
-            GetCategoryResponseModel response = null;
+            GetCategoryResponseModel? response = null;
             if (category != null)
             {
                 response = new GetCategoryResponseModel
@@ -74,7 +74,7 @@ namespace AS.ApplicationServices.Implementations
             return response;
         }
 
-        public async Task UpdateAsync(UpdateAdRequestModel model)
+        public async Task UpdateAsync(UpdateCategoryRequestModel model)
         {
             var category = await this._dbContext.Categories.SingleOrDefaultAsync(c => c.Id == model.Id);
 

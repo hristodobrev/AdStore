@@ -5,10 +5,10 @@ namespace AS.ApplicationServices.Interfaces
 {
     public interface ICategoryService
     {
-        Task<int> CreateAsync(CreateAdRequestModel model);
+        Task<int> CreateAsync(CreateCategoryRequestModel model);
         Task<GetCategoryResponseModel?> GetByIdAsync(int id);
         Task<IEnumerable<GetCategoryResponseModel>> GetAllAsync();
-        Task UpdateAsync(UpdateAdRequestModel model);
+        Task UpdateAsync(UpdateCategoryRequestModel model);
         Task DeleteAsync(int id);
     }
 }
