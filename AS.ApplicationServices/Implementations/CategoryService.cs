@@ -15,7 +15,7 @@ namespace AS.ApplicationServices.Implementations
             _dbContext = dbContext;
         }
 
-        public async Task<int> CreateAsync(CreateCategoryRequestModel model)
+        public async Task<int> CreateAsync(CreateAdRequestModel model)
         {
             var category = new Category
             {
@@ -74,7 +74,7 @@ namespace AS.ApplicationServices.Implementations
             return response;
         }
 
-        public async Task UpdateAsync(UpdateCategoryRequestModel model)
+        public async Task UpdateAsync(UpdateAdRequestModel model)
         {
             var category = await this._dbContext.Categories.SingleOrDefaultAsync(c => c.Id == model.Id);
 

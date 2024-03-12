@@ -22,7 +22,7 @@ namespace AS.WebApiServices.Controllers
         /// <returns></returns>
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        public async Task<IActionResult> Create(CreateCategoryRequestModel model)
+        public async Task<IActionResult> Create(CreateAdRequestModel model)
         {
             await this._service.CreateAsync(model);
 
@@ -71,7 +71,7 @@ namespace AS.WebApiServices.Controllers
         /// <returns></returns>
         [HttpPut]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> Put(UpdateCategoryRequestModel model)
+        public async Task<IActionResult> Put(UpdateAdRequestModel model)
         {
             await this._service.UpdateAsync(model);
 

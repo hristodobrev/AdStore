@@ -12,9 +12,9 @@ namespace AS.Data.Entities
         [DataType(DataType.Password)]
         public string Password { get; set; }
         [StringLength(100)]
-        public string FirstName { get; set; }
+        public string? FirstName { get; set; }
         [StringLength(100)]
-        public string LastName { get; set; }
+        public string? LastName { get; set; }
         [Required]
         [Range(0, 100)]
         public int Age { get; set; }

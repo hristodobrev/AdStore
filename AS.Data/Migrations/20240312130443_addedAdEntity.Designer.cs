@@ -4,6 +4,7 @@ using AS.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AS.Data.Migrations
 {
     [DbContext(typeof(AdStoreDbContext))]
-    partial class AdStoreDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240312130443_addedAdEntity")]
+    partial class addedAdEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -62,12 +65,8 @@ namespace AS.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CategoryId");
-
                     b.HasIndex("Title")
                         .IsUnique();
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Ads");
                 });
@@ -157,25 +156,6 @@ namespace AS.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("AS.Data.Entities.Ad", b =>
-                {
-                    b.HasOne("AS.Data.Entities.Category", "Category")
-                        .WithMany()
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("AS.Data.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Category");
-
-                    b.Navigation("User");
                 });
 #pragma warning restore 612, 618
         }
