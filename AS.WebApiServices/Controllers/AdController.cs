@@ -1,10 +1,12 @@
 ﻿using AS.ApplicationServices.Interfaces;
 using AS.ApplicationServices.RequestModels.Ad;
 using AS.ApplicationServices.ResponseModels.Ad;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AS.WebApiServices.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class AdController : ControllerBase

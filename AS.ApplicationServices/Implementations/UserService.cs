@@ -20,7 +20,7 @@ namespace AS.ApplicationServices.Implementations
             var user = new User
             {
                 Username = model.Username,
-                Password = model.Password,
+                Password = BCrypt.Net.BCrypt.EnhancedHashPassword(model.Password, 13),
                 FirstName = model.FirstName,
                 LastName = model.LastName,
                 Age = model.Age,
@@ -92,7 +92,7 @@ namespace AS.ApplicationServices.Implementations
             {
                 user.FirstName = model.FirstName;
                 user.LastName = model.LastName;
-                user.Password = model.Password;
+                user.Password = BCrypt.Net.BCrypt.EnhancedHashPassword(model.Password, 13);
                 user.Age = model.Age;
                 user.Town = model.Town;
                 user.IsPremium = model.IsPremium;
@@ -111,6 +111,18 @@ namespace AS.ApplicationServices.Implementations
 
                 await this._dbContext.SaveChangesAsync();
             }
+        }
+
+        public async Task<bool> Login(string username, string password)
+        {
+            var user = await this._dbContext.Users.SingleOrDefaultAsync(u => u.Username == username);
+
+            if (user != null)
+            {
+                return BCrypt.Net.BCrypt.EnhancedVerify(password, user.Password);
+            }
+
+            return false;
         }
     }
 }

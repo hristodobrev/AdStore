@@ -10,5 +10,6 @@ namespace AS.ApplicationServices.Interfaces
         Task<IEnumerable<GetUserResponseModel>> GetAllAsync();
         Task UpdateAsync(UpdateUserRequestModel model);
         Task DeleteAsync(int id);
+        Task<bool> Login(string username, string password);
     }
 }
