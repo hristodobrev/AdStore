@@ -35,9 +35,16 @@ namespace AS.ApplicationServices.Implementations
             return user.Id;
         }
 
-        public async Task<IEnumerable<GetUserResponseModel>> GetAllAsync()
+        public async Task<IEnumerable<GetUserResponseModel>> GetAsync(string? name = null, int page = 0, int pageSize = 20)
         {
-            var users = await this._dbContext.Users.ToListAsync();
+            IQueryable<User> query = this._dbContext.Users;
+            if (name != null)
+                query = query.Where(u =>
+                    u.FirstName != null && u.FirstName.ToLower().Contains(name.ToLower()) ||
+                    u.LastName != null && u.LastName.ToLower().Contains(name.ToLower())
+                );
+
+            var users = await query.Skip(page * pageSize).Take(pageSize).ToListAsync();
 
             var response = new List<GetUserResponseModel>();
             foreach (var user in users)
@@ -113,16 +120,16 @@ namespace AS.ApplicationServices.Implementations
             }
         }
 
-        public async Task<bool> Login(string username, string password)
+        public async Task<User?> Login(string username, string password)
         {
             var user = await this._dbContext.Users.SingleOrDefaultAsync(u => u.Username == username);
 
-            if (user != null)
+            if (user != null && BCrypt.Net.BCrypt.EnhancedVerify(password, user.Password))
             {
-                return BCrypt.Net.BCrypt.EnhancedVerify(password, user.Password);
+                return user;
             }
 
-            return false;
+            return null;
         }
     }
 }

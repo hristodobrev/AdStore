@@ -14,7 +14,7 @@ namespace AS.ApplicationServices.Implementations
         {
             this._dbContext = dbContext;
         }
-        public async Task<int> CreateAsync(CreateAdRequestModel model)
+        public async Task<int> CreateAsync(CreateAdRequestModel model, int userId)
         {
             var ad = new Ad
             {
@@ -24,7 +24,7 @@ namespace AS.ApplicationServices.Implementations
                 IsActive = model.IsActive,
                 IsSold = model.IsSold,
                 CategoryId = model.CategoryId,
-                UserId = model.UserId
+                UserId = userId
             };
 
             await this._dbContext.Ads.AddAsync(ad);
@@ -34,10 +34,17 @@ namespace AS.ApplicationServices.Implementations
             return ad.Id;
         }
 
-        public async Task<IEnumerable<GetAdResponseModel>> GetAllAsync()
+        public async Task<IEnumerable<GetAdResponseModel>> GetAsync(string? keyword = null, int page = 0, int pageSize = 20)
         {
-            var ads = await this._dbContext.Ads
-                .Include(a => a.Category)
+            IQueryable<Ad> query = this._dbContext.Ads;
+
+            if (keyword != null)
+                query = query.Where(a =>
+                    a.Title.ToLower().Contains(keyword.ToLower()) ||
+                    a.Description != null && a.Description.ToLower().Contains(keyword.ToLower())
+                );
+
+            var ads = await query.Include(a => a.Category)
                 .Include(a => a.User)
                 .ToListAsync();
 

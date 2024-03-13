@@ -59,9 +59,9 @@ namespace AS.WebApiServices.Controllers
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(IEnumerable<GetCategoryResponseModel>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get(string? name = null, int page = 0, int pageSize = 20)
         {
-            var categories = await this._service.GetAllAsync();
+            var categories = await this._service.GetAsync(name, page, pageSize);
 
             return Ok(categories);
         }

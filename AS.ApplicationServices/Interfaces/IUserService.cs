@@ -1,5 +1,6 @@
 ﻿using AS.ApplicationServices.RequestModels.User;
 using AS.ApplicationServices.ResponseModels.User;
+using AS.Data.Entities;
 
 namespace AS.ApplicationServices.Interfaces
 {
@@ -7,9 +8,9 @@ namespace AS.ApplicationServices.Interfaces
     {
         Task<int> CreateAsync(CreateUserRequestModel model);
         Task<GetUserResponseModel?> GetByIdAsync(int id);
-        Task<IEnumerable<GetUserResponseModel>> GetAllAsync();
+        Task<IEnumerable<GetUserResponseModel>> GetAsync(string? name = null, int page = 0, int pageSize = 20);
         Task UpdateAsync(UpdateUserRequestModel model);
         Task DeleteAsync(int id);
-        Task<bool> Login(string username, string password);
+        Task<User?> Login(string username, string password);
     }
 }

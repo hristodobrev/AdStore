@@ -55,11 +55,11 @@ namespace AS.WebApiServices.Controllers
         /// Returns all users
         /// </summary>
         /// <returns>User</returns>
-        [HttpGet()]
+        [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<GetUserResponseModel>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll(string? name = null, int page = 0, int pageSize = 20)
         {
-            var users = await this._service.GetAllAsync();
+            var users = await this._service.GetAsync(name, page, pageSize);
 
             return Ok(users);
         }

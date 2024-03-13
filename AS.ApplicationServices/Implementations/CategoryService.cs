@@ -32,9 +32,13 @@ namespace AS.ApplicationServices.Implementations
             return category.Id;
         }
 
-        public async Task<IEnumerable<GetCategoryResponseModel>> GetAllAsync()
+        public async Task<IEnumerable<GetCategoryResponseModel>> GetAsync(string? name = null, int page = 0, int pageSize = 20)
         {
-            var categories = await this._dbContext.Categories.ToListAsync();
+            IQueryable<Category> query = this._dbContext.Categories;
+            if (name != null)
+                query = query.Where(u => u.Name.ToLower().Contains(name.ToLower()));
+
+            var categories = await query.Skip(page * pageSize).Take(pageSize).ToListAsync();
 
             var response = new List<GetCategoryResponseModel>();
             foreach (var category in categories)

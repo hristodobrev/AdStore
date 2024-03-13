@@ -1,6 +1,7 @@
 ﻿using AS.ApplicationServices.Interfaces;
 using AS.ApplicationServices.RequestModels.Ad;
 using AS.ApplicationServices.ResponseModels.Ad;
+using AS.ApplicationServices.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,10 +12,12 @@ namespace AS.WebApiServices.Controllers
     [ApiController]
     public class AdController : ControllerBase
     {
-        private readonly IAdService _service;
-        public AdController(IAdService service)
+        private readonly IAdService _adService;
+        private readonly ICategoryService _categoryService;
+        public AdController(IAdService adService, ICategoryService categoryService)
         {
-            this._service = service;
+            this._adService = adService;
+            this._categoryService = categoryService;
         }
 
         /// <summary>
@@ -26,7 +29,14 @@ namespace AS.WebApiServices.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         public async Task<IActionResult> Post(CreateAdRequestModel model)
         {
-            await this._service.CreateAsync(model);
+            var category = await this._categoryService.GetByIdAsync(model.CategoryId);
+            if (category == null)
+                return BadRequest("This Category does not exist");
+
+            if (category.RequiredRating > User.GetRating())
+                return BadRequest("This user does not have the required rating to publish ad to this category.");
+
+            await this._adService.CreateAsync(model, User.GetUserId());
 
             return Created();
         }
@@ -41,7 +51,7 @@ namespace AS.WebApiServices.Controllers
         [ProducesResponseType(typeof(GetAdResponseModel), StatusCodes.Status200OK)]
         public async Task<IActionResult> Get(int id)
         {
-            var ad = await this._service.GetByIdAsync(id);
+            var ad = await this._adService.GetByIdAsync(id);
             if (ad == null)
             {
                 return NotFound();
@@ -56,9 +66,9 @@ namespace AS.WebApiServices.Controllers
         /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<GetAdResponseModel>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get(string? keyword = null, int page = 0, int pageSize = 20)
         {
-            var ads = await this._service.GetAllAsync();
+            var ads = await this._adService.GetAsync(keyword, page, pageSize);
 
             return Ok(ads);
         }
@@ -72,7 +82,7 @@ namespace AS.WebApiServices.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> Put(UpdateAdRequestModel model)
         {
-            await this._service.UpdateAsync(model);
+            await this._adService.UpdateAsync(model);
 
             return NoContent();
         }
@@ -86,7 +96,7 @@ namespace AS.WebApiServices.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> Delete(int id)
         {
-            await this._service.DeleteAsync(id);
+            await this._adService.DeleteAsync(id);
 
             return NoContent();
         }

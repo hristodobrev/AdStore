@@ -1,8 +1,10 @@
 ﻿using AS.ApplicationServices.Interfaces;
 using AS.ApplicationServices.RequestModels.Auth;
+using AS.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
 
 namespace AS.WebApiServices.Controllers
@@ -22,22 +24,31 @@ namespace AS.WebApiServices.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(LoginRequestModel model)
         {
-            bool success = await this._service.Login(model.Username, model.Password);
+            User? user = await this._service.Login(model.Username, model.Password);
 
-            if (success)
+            if (user != null)
             {
                 var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
                 var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
-                var Sectoken = new JwtSecurityToken(_configuration["Jwt:Issuer"],
-                  _configuration["Jwt:Issuer"],
-                  null,
-                  expires: DateTime.Now.AddMinutes(120),
-                  signingCredentials: credentials);
+                ClaimsIdentity claimsIdentity = new ClaimsIdentity(new[]
+                {
+                    new Claim("UserId", user.Id.ToString()),
+                    new Claim("Rating",user.Rating.ToString()),
+                    new Claim("IsPremium",user.IsPremium.ToString()),
+                });
 
-                var token = new JwtSecurityTokenHandler().WriteToken(Sectoken);
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var jwtToken = tokenHandler.CreateJwtSecurityToken(
+                    issuer: _configuration["Jwt:Issuer"],
+                    audience: _configuration["Jwt:Issuer"],
+                    subject: claimsIdentity,
+                    expires: DateTime.Now.AddMinutes(120),
+                    signingCredentials: credentials);
 
-                return Ok(token);
+                var tokenString = tokenHandler.WriteToken(jwtToken);
+
+                return Ok(tokenString);
             }
 
             return BadRequest();
