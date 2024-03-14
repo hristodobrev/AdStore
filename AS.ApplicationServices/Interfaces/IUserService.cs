@@ -9,6 +9,7 @@ namespace AS.ApplicationServices.Interfaces
         Task<GetUserResponseModel?> GetByIdAsync(int id);
         Task<IEnumerable<GetUserResponseModel>> GetAsync(string? name = null, int page = 0, int pageSize = 20);
         Task UpdateAsync(UpdateUserRequestModel model);
+        Task PatchAsync(PatchUserRequestModel model);
         Task DeleteAsync(int id);
     }
 }

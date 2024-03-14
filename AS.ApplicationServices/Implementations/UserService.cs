@@ -121,5 +121,17 @@ namespace AS.ApplicationServices.Implementations
                 await this._dbContext.SaveChangesAsync();
             }
         }
+
+        public async Task PatchAsync(PatchUserRequestModel model)
+        {
+            var user = await this._dbContext.Users.SingleOrDefaultAsync(u => u.Id == model.Id);
+
+            if (user != null)
+            {
+                user.IsPremium = model.IsPremium;
+
+                await this._dbContext.SaveChangesAsync();
+            }
+        }
     }
 }
