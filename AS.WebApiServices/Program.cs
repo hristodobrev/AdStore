@@ -37,6 +37,11 @@ builder.Services.AddDbContext<AdStoreDbContext>(options =>
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IAdService, AdService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+
+builder.Services.AddAuthorization(options =>
+      options.AddPolicy("Admin",
+      policy => policy.RequireClaim("IsAdmin")));
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

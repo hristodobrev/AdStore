@@ -9,7 +9,6 @@ namespace AS.Data.Entities
         [StringLength(100)]
         public string Username { get; set; }
         [Required]
-        [DataType(DataType.Password)]
         public string Password { get; set; }
         [StringLength(100)]
         public string? FirstName { get; set; }
@@ -23,6 +22,7 @@ namespace AS.Data.Entities
         public string Town { get; set; }
         public int Rating { get; set; }
         public bool IsPremium { get; set; }
+        public bool IsAdmin { get; set; }
         public DateTime DateCreated { get; set; }
     }
 }

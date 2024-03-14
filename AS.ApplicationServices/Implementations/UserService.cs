@@ -25,7 +25,9 @@ namespace AS.ApplicationServices.Implementations
                 LastName = model.LastName,
                 Age = model.Age,
                 Town = model.Town,
-                IsPremium = model.IsPremium
+                Rating = model.Rating,
+                IsPremium = model.IsPremium,
+                IsAdmin = model.IsAdmin,
             };
 
             await this._dbContext.Users.AddAsync(user);
@@ -118,18 +120,6 @@ namespace AS.ApplicationServices.Implementations
 
                 await this._dbContext.SaveChangesAsync();
             }
-        }
-
-        public async Task<User?> Login(string username, string password)
-        {
-            var user = await this._dbContext.Users.SingleOrDefaultAsync(u => u.Username == username);
-
-            if (user != null && BCrypt.Net.BCrypt.EnhancedVerify(password, user.Password))
-            {
-                return user;
-            }
-
-            return null;
         }
     }
 }

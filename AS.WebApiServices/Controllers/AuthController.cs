@@ -1,6 +1,6 @@
 ﻿using AS.ApplicationServices.Interfaces;
 using AS.ApplicationServices.RequestModels.Auth;
-using AS.Data.Entities;
+using AS.ApplicationServices.ResponseModels.Auth;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -13,45 +13,83 @@ namespace AS.WebApiServices.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly IUserService _service;
+        private readonly IAuthService _service;
         private readonly IConfiguration _configuration;
-        public AuthController(IUserService service, IConfiguration configuration)
+        public AuthController(IAuthService service, IConfiguration configuration)
         {
             this._service = service;
             this._configuration = configuration;
         }
 
-        [HttpPost]
+        /// <summary>
+        /// Login with username and password
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost("Login")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Login(LoginRequestModel model)
         {
-            User? user = await this._service.Login(model.Username, model.Password);
-
-            if (user != null)
+            try
             {
-                var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-                var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+                AuthResponseModel user = await this._service.Login(model);
 
-                ClaimsIdentity claimsIdentity = new ClaimsIdentity(new[]
-                {
-                    new Claim("UserId", user.Id.ToString()),
-                    new Claim("Rating",user.Rating.ToString()),
-                    new Claim("IsPremium",user.IsPremium.ToString()),
-                });
-
-                var tokenHandler = new JwtSecurityTokenHandler();
-                var jwtToken = tokenHandler.CreateJwtSecurityToken(
-                    issuer: _configuration["Jwt:Issuer"],
-                    audience: _configuration["Jwt:Issuer"],
-                    subject: claimsIdentity,
-                    expires: DateTime.Now.AddMinutes(120),
-                    signingCredentials: credentials);
-
-                var tokenString = tokenHandler.WriteToken(jwtToken);
-
-                return Ok(tokenString);
+                return Ok(GenerateToken(user));
             }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
-            return BadRequest();
+        /// <summary>
+        /// Register new User
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost("Register")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Register(RegisterRequestModel model)
+        {
+            try
+            {
+                AuthResponseModel user = await this._service.Register(model);
+
+                return Ok(GenerateToken(user));
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        private string GenerateToken(AuthResponseModel user)
+        {
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+            var claims = new List<Claim> {
+                new Claim("UserId", user.Id.ToString()),
+                new Claim("Rating",user.Rating.ToString()),
+                new Claim("IsPremium", user.IsPremium.ToString())
+            };
+
+            if (user.IsAdmin)
+                claims.Add(new Claim("IsAdmin", user.IsAdmin.ToString()));
+
+            ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims);
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var jwtToken = tokenHandler.CreateJwtSecurityToken(
+                issuer: _configuration["Jwt:Issuer"],
+                audience: _configuration["Jwt:Issuer"],
+                subject: claimsIdentity,
+                expires: DateTime.Now.AddMinutes(120),
+                signingCredentials: credentials);
+
+            return tokenHandler.WriteToken(jwtToken);
         }
     }
 }

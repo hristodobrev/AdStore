@@ -36,6 +36,9 @@ namespace AS.WebApiServices.Controllers
             if (category.RequiredRating > User.GetRating())
                 return BadRequest("This user does not have the required rating to publish ad to this category.");
 
+            if (category.IsRequiringPremium && !User.GetIsPremium())
+                return BadRequest("This user must be premium to publish ad to this category.");
+
             await this._adService.CreateAsync(model, User.GetUserId());
 
             return Created();
@@ -66,9 +69,9 @@ namespace AS.WebApiServices.Controllers
         /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<GetAdResponseModel>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> Get(string? keyword = null, int page = 0, int pageSize = 20)
+        public async Task<IActionResult> Get(string? keyword = null, decimal minPrice = 0, decimal maxPrice = 0, int page = 0, int pageSize = 20)
         {
-            var ads = await this._adService.GetAsync(keyword, page, pageSize);
+            var ads = await this._adService.GetAsync(keyword, minPrice, maxPrice, page, pageSize);
 
             return Ok(ads);
         }
@@ -83,6 +86,20 @@ namespace AS.WebApiServices.Controllers
         public async Task<IActionResult> Put(UpdateAdRequestModel model)
         {
             await this._adService.UpdateAsync(model);
+
+            return NoContent();
+        }
+
+        /// <summary>
+        /// Updates an ad as sold or not
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPatch]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<IActionResult> Patch(PatchAdRequestModel model)
+        {
+            await this._adService.PatchAsync(model);
 
             return NoContent();
         }

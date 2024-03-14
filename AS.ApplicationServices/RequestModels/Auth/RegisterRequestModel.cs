@@ -1,23 +1,23 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace AS.ApplicationServices.RequestModels.User
+namespace AS.ApplicationServices.RequestModels.Auth
 {
-    public class UpdateUserRequestModel
+    public class RegisterRequestModel
     {
         [Required]
-        public int Id { get; set; }
+        [StringLength(100)]
+        public string Username { get; set; }
         [Required]
         public string Password { get; set; }
         [StringLength(100)]
-        public string FirstName { get; set; }
+        public string? FirstName { get; set; }
         [StringLength(100)]
-        public string LastName { get; set; }
+        public string? LastName { get; set; }
         [Required]
         [Range(0, 100)]
         public int Age { get; set; }
         [Required]
         [StringLength(50)]
         public string Town { get; set; }
-        public bool IsPremium { get; set; }
     }
 }

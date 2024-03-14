@@ -8,7 +8,6 @@ namespace AS.ApplicationServices.RequestModels.User
         [StringLength(100)]
         public string Username { get; set; }
         [Required]
-        [DataType(DataType.Password)]
         public string Password { get; set; }
         [StringLength(100)]
         public string FirstName { get; set; }
@@ -20,6 +19,8 @@ namespace AS.ApplicationServices.RequestModels.User
         [Required]
         [StringLength(50)]
         public string Town { get; set; }
+        public int Rating { get; set; }
         public bool IsPremium { get; set; }
+        public bool IsAdmin { get; set; }
     }
 }

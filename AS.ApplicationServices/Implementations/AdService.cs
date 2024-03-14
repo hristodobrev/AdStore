@@ -34,7 +34,7 @@ namespace AS.ApplicationServices.Implementations
             return ad.Id;
         }
 
-        public async Task<IEnumerable<GetAdResponseModel>> GetAsync(string? keyword = null, int page = 0, int pageSize = 20)
+        public async Task<IEnumerable<GetAdResponseModel>> GetAsync(string? keyword = null, decimal minPrice = 0, decimal maxPrice = 0, int page = 0, int pageSize = 20)
         {
             IQueryable<Ad> query = this._dbContext.Ads;
 
@@ -43,6 +43,12 @@ namespace AS.ApplicationServices.Implementations
                     a.Title.ToLower().Contains(keyword.ToLower()) ||
                     a.Description != null && a.Description.ToLower().Contains(keyword.ToLower())
                 );
+
+            if (minPrice > 0)
+                query = query.Where(a => a.Price >= minPrice);
+
+            if (maxPrice > 0)
+                query = query.Where(a => a.Price <= maxPrice);
 
             var ads = await query.Include(a => a.Category)
                 .Include(a => a.User)
@@ -112,6 +118,22 @@ namespace AS.ApplicationServices.Implementations
                 ad.IsActive = model.IsActive;
                 ad.IsSold = model.IsSold;
                 ad.CategoryId = model.CategoryId;
+
+                await this._dbContext.SaveChangesAsync();
+            }
+        }
+
+        public async Task PatchAsync(PatchAdRequestModel model)
+        {
+            var ad = await this._dbContext.Ads.SingleOrDefaultAsync(a => a.Id == model.Id);
+
+            if (ad != null)
+            {
+                if (model.IsActive.HasValue)
+                    ad.IsActive = model.IsActive.Value;
+
+                if (model.IsSold.HasValue)
+                    ad.IsSold = model.IsSold.Value;
 
                 await this._dbContext.SaveChangesAsync();
             }
