@@ -5,7 +5,7 @@ namespace AS.ApplicationServices.Interfaces
 {
     public interface IAuthService
     {
-        Task<AuthResponseModel> Login(LoginRequestModel model);
-        Task<AuthResponseModel> Register(RegisterRequestModel model);
+        Task<AuthServiceModel> Login(LoginRequestModel model);
+        Task<AuthServiceModel> Register(RegisterRequestModel model);
     }
 }

@@ -2,9 +2,8 @@
 {
     public class AuthResponseModel
     {
-        public int Id { get; set; }
-        public int Rating { get; set; }
-        public bool IsPremium { get; set; }
-        public bool IsAdmin { get; set; }
+        public string Token { get; set; }
+        public string Username { get; set; }
+        public DateTime ExpireDate { get; set; }
     }
 }

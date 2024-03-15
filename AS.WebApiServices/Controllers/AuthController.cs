@@ -27,13 +27,13 @@ namespace AS.WebApiServices.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost("Login")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(AuthResponseModel), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Login(LoginRequestModel model)
         {
             try
             {
-                AuthResponseModel user = await this._service.Login(model);
+                AuthServiceModel user = await this._service.Login(model);
 
                 return Ok(GenerateToken(user));
             }
@@ -49,13 +49,13 @@ namespace AS.WebApiServices.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost("Register")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(AuthResponseModel), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Register(RegisterRequestModel model)
         {
             try
             {
-                AuthResponseModel user = await this._service.Register(model);
+                AuthServiceModel user = await this._service.Register(model);
 
                 return Ok(GenerateToken(user));
             }
@@ -65,7 +65,7 @@ namespace AS.WebApiServices.Controllers
             }
         }
 
-        private string GenerateToken(AuthResponseModel user)
+        private AuthResponseModel GenerateToken(AuthServiceModel user)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
@@ -82,14 +82,20 @@ namespace AS.WebApiServices.Controllers
             ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims);
 
             var tokenHandler = new JwtSecurityTokenHandler();
+            DateTime expireDate = DateTime.Now.AddMinutes(120);
             var jwtToken = tokenHandler.CreateJwtSecurityToken(
                 issuer: _configuration["Jwt:Issuer"],
                 audience: _configuration["Jwt:Issuer"],
                 subject: claimsIdentity,
-                expires: DateTime.Now.AddMinutes(120),
+                expires: expireDate,
                 signingCredentials: credentials);
 
-            return tokenHandler.WriteToken(jwtToken);
+            return new AuthResponseModel
+            {
+                Token = tokenHandler.WriteToken(jwtToken),
+                Username = user.Username,
+                ExpireDate = expireDate
+            };
         }
     }
 }

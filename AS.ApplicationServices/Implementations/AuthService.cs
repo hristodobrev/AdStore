@@ -15,15 +15,16 @@ namespace AS.ApplicationServices.Implementations
             this._dbContext = dbContext;
         }
 
-        public async Task<AuthResponseModel> Login(LoginRequestModel model)
+        public async Task<AuthServiceModel> Login(LoginRequestModel model)
         {
             var user = await this._dbContext.Users.SingleOrDefaultAsync(u => u.Username == model.Username);
 
             if (user != null && BCrypt.Net.BCrypt.EnhancedVerify(model.Password, user.Password))
             {
-                return new AuthResponseModel
+                return new AuthServiceModel
                 {
                     Id = user.Id,
+                    Username = model.Username,
                     IsAdmin = user.IsAdmin,
                     IsPremium = user.IsPremium,
                     Rating = user.Rating
@@ -33,7 +34,7 @@ namespace AS.ApplicationServices.Implementations
             throw new InvalidOperationException("Invalid username or password.");
         }
 
-        public async Task<AuthResponseModel> Register(RegisterRequestModel model)
+        public async Task<AuthServiceModel> Register(RegisterRequestModel model)
         {
             bool existingUser = await this._dbContext.Users.AnyAsync(u => u.Username == model.Username);
 
@@ -54,9 +55,10 @@ namespace AS.ApplicationServices.Implementations
 
             await this._dbContext.SaveChangesAsync();
 
-            return new AuthResponseModel
+            return new AuthServiceModel
             {
                 Id = user.Id,
+                Username = model.Username,
                 IsAdmin = user.IsAdmin,
                 IsPremium = user.IsPremium,
                 Rating = user.Rating

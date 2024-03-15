@@ -9,9 +9,9 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Add services to the container.
 var jwtIssuer = builder.Configuration.GetSection("Jwt:Issuer").Get<string>();
 var jwtKey = builder.Configuration.GetSection("Jwt:Key").Get<string>();
-
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -28,7 +28,6 @@ builder.Services
     };
 });
 
-// Add services to the container.
 builder.Services.AddDbContext<AdStoreDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("Default"));
@@ -79,6 +78,25 @@ builder.Services.AddSwaggerGen(c =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+app.Use(async (context, next) =>
+{
+    if (context.Request.Method == "OPTIONS")
+    {
+        context.Response.Headers?.Append("Access-Control-Allow-Origin", new[] { (string)context.Request.Headers["Origin"] });
+        context.Response.Headers?.Append("Access-Control-Allow-Headers", new[] { "Origin, X-Requested-With, Content-Type, Accept" });
+        context.Response.Headers?.Append("Access-Control-Allow-Methods", new[] { "GET, POST, PUT, DELETE, OPTIONS" });
+        context.Response.Headers?.Append("Access-Control-Allow-Credentials", new[] { "true" });
+        context.Response.StatusCode = 200;
+        await context.Response.WriteAsync("OK");
+
+        return;
+    }
+
+    await next.Invoke();
+});
+
+app.UseCors(policy => policy.WithOrigins("http://localhost:4210").AllowAnyHeader().AllowAnyMethod());
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
