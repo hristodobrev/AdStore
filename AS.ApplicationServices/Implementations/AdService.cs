@@ -52,6 +52,8 @@ namespace AS.ApplicationServices.Implementations
 
             var ads = await query.Include(a => a.Category)
                 .Include(a => a.User)
+                .Skip(page * pageSize)
+                .Take(pageSize)
                 .ToListAsync();
 
             var response = new List<GetAdResponseModel>();
